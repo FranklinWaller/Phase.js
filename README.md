@@ -1,6 +1,8 @@
 Phase.js
 ========
 
+**Disclaimer: Phase.js is not a production ready framework. It's still a work in progress**
+
 Phase.js is a framework for building JavaScript applications. It works in modules
 that registers itself with the dependency. If the dependency's of your module isn't
 loaded yet it will put it on a stack and wait till all the modules that it need is 
@@ -24,4 +26,4 @@ phase.module('foo', [], function(scope){
 This will display 'i am ready' despite the order of the code. If you delete the 
 foo module then bar will not run.
 
-This project is a WIP. But any suggestions or forks are very welcome.
+If you want to join the project feel free to fork and edit it!

@@ -4,7 +4,57 @@
         registerdModules: {},
         amountOfModules: 0,
         moduleScope: {},
-        
+        notReadyModules: {},
+        dependencyCheck: function(module) {
+            var dependencies = module.dependencies;
+
+            //Loop through all the registered modules            
+            for (var key in this.registerdModules) {
+
+                //Check if any of the dependencies has been loaded
+                if (dependencies.indexOf(this.registerdModules[key].name) > -1) {
+                    //It has been loaded so delete it from the list
+                    var index = dependencies.indexOf(this.registerdModules[key].name);
+                    dependencies.splice(index, 1);
+                }
+            }           
+
+            //Check if we still got dependency's to load
+            if (typeof dependencies !== 'undefined' && dependencies.length > 0) {
+                module.dependencies = dependencies;
+                this.notReadyModules[module.name] = module;
+            } else {
+                //All the dependency's are good. The module is good to run.
+                module.isReady = true;
+            }
+        },
+        notReadyModulesCheck: function(module) {    
+            
+            console.log(this.notReadyModules);
+            
+            //if (typeof this.notReadyModules !== 'undefined' && this.notReadyModules.length > 0) { 
+                //Loop through all the not ready modules
+                for (var key in this.notReadyModules) {
+                    //The dependency matches the new module
+                    if (this.notReadyModules[key].dependencies.indexOf(module.name) > -1) {
+                        
+                        //Delete it from the list
+                        var index = this.notReadyModules[key].dependencies.indexOf(module.name);
+                        this.notReadyModules[key].dependencies.splice(index);
+
+                        //Check if dependencies is empty
+                        if (typeof this.notReadyModules[key].dependencies !== 'undefined' && this.notReadyModules[key].dependencies.length > 0) {
+                            
+                        }else{
+                            //We got all the dependency's to run. Lets do it.
+                            this.notReadyModules[key].isReady = true;
+                            this.notReadyModules[key].func(public.currentScope);
+                        }
+                    }
+                }
+            //}
+
+        },
         ajax: function(options) {
             var xmlhttp;
             var async = true;
@@ -57,6 +107,7 @@
 
     var public = {
         currentModule: {},
+        currentScope: {},
         /**
          * Registers a new module to be used
          * 
@@ -66,35 +117,44 @@
          * @returns {_L1.public}
          */
         module: function(name, dependencies, func) {
-            
+
             //Create a nice object of the module
             var newModule = {
                 name: name,
                 dependencies: dependencies,
-                func: func
+                func: func,
+                isReady: false
             };
+
+            if (dependencies.length !== 0) {
+
+                private.dependencyCheck(newModule);
+            } else {
+                newModule.isReady = true;
+            }
 
             //Registers the module and puts it on the stack
             private.registerdModules[name] = newModule;
             private.amountOfModules++;
-            
+
             //For future purposes
             currentModule = newModule;
-            
-            //Create a private scope so the module can freely do things
-            var scope = {};
-            func(scope);
-            
+
+            //Create a private scope so the module can freely do things           
+            private.notReadyModulesCheck(newModule);
+
+            if (newModule.isReady) {
+                func(this.currentScope);
+            }
+
             //Put the scope together with the name in the stack
-            private.moduleScope[name] = scope;
-            
+            private.moduleScope[name] = this.currentScope;
+
             //For future chaining
             return this;
         },
-        
-        check: function(){
-            console.log(private.moduleScope);
-            console.log(private.registerdModules);
+        check: function() {
+            
         }
     };
 

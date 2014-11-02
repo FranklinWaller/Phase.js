@@ -3,21 +3,30 @@
         <title>Example</title>
         <script src="../src/phase.js"></script>
         <script>
-                       
-            phase.module('new', [], function(scope){
+            //The modules foo and bar are not yet loaded so no action is taken.
+            phase.module('foobar', ['foo', 'bar'], function(scope){
+                alert('i am ready');
+            });   
+            
+            phase.module('barfoo', ['foo'], function(scope){
+                alert('barfoo is too');
+            });
+            
+            phase.module('foo', [], function(scope){
+                scope.test = 'something';
+                scope.execute = function(){
+                    alert('not so much');
+                };
+            });
+                        
+            phase.module('bar', [], function(scope){
                 scope.test = 'something';
                 scope.execute = function(){
                     alert('not so much');
                 };
             });
             
-            phase.module('new.test', ['new'], function(scope){
-                scope.execute = function(){
-                    alert('newwwwww');
-                };
-            });
-            
-            phase.check();
+            //Both modules are loaded foobar will execute                        
         </script>
     </head>
     <body>

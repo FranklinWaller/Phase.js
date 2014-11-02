@@ -21,6 +21,7 @@ phase.module('foo', [], function(scope){
 
 ```
 
-This will display 'i am ready' despite the order of the code.
+This will display 'i am ready' despite the order of the code. If you delete the 
+foo module then bar will not run.
 
 This project is a WIP. But any suggestions or forks are very welcome.

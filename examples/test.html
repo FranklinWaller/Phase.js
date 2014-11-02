@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <title>Example</title>
+        <script src="../src/phase.js"></script>
+        <script>
+                       
+            phase.module('new', [], function(scope){
+                scope.test = 'something';
+                scope.execute = function(){
+                    alert('not so much');
+                };
+            });
+            
+            phase.module('new.test', ['new'], function(scope){
+                scope.execute = function(){
+                    alert('newwwwww');
+                };
+            });
+            
+            phase.check();
+        </script>
+    </head>
+    <body>
+        Test.
+        <a href="#test">#test</a>
+        <a href="#test2">#test2</a>
+    </body>
+</html>

@@ -5,6 +5,43 @@
         amountOfModules: 0,
         moduleScope: {},
         notReadyModules: {},
+        routes: {},
+        controllers: {},
+        containerElement: null,
+        
+        doRouting: function() {
+            var route = window.location.hash.substring(1);
+            var routeObject = private.getMatchingRoute(route);
+            
+            private.ajax({
+                url: routeObject.url,
+                method: 'GET',
+                data: {},
+                success: function(xmlhttp) {
+                    private.containerElement.innerHTML = xmlhttp.responseText; 
+                    private.runController(routeObject.controller);
+                },
+                error: function(xmlhttp) {
+                    console.log('Ajax went wrong');
+                }
+            });
+        },
+        
+        runController: function(name){
+            for(var key in this.controllers){
+                if(key == name){
+                    this.controllers[key].func();
+                }
+            }
+        },
+        
+        getMatchingRoute: function(name) {
+            for (var key in this.routes) {
+                if (key == name) {
+                    return private.routes[key];
+                }
+            }
+        },
         dependencyCheck: function(module) {
             var dependencies = module.dependencies;
 
@@ -17,7 +54,7 @@
                     var index = dependencies.indexOf(this.registerdModules[key].name);
                     dependencies.splice(index, 1);
                 }
-            }           
+            }
 
             //Check if we still got dependency's to load
             if (typeof dependencies !== 'undefined' && dependencies.length > 0) {
@@ -28,30 +65,30 @@
                 module.isReady = true;
             }
         },
-        notReadyModulesCheck: function(module) {    
-            
-            console.log(this.notReadyModules);
-            
-            //if (typeof this.notReadyModules !== 'undefined' && this.notReadyModules.length > 0) { 
-                //Loop through all the not ready modules
-                for (var key in this.notReadyModules) {
-                    //The dependency matches the new module
-                    if (this.notReadyModules[key].dependencies.indexOf(module.name) > -1) {
-                        
-                        //Delete it from the list
-                        var index = this.notReadyModules[key].dependencies.indexOf(module.name);
-                        this.notReadyModules[key].dependencies.splice(index);
+        notReadyModulesCheck: function(module) {
 
-                        //Check if dependencies is empty
-                        if (typeof this.notReadyModules[key].dependencies !== 'undefined' && this.notReadyModules[key].dependencies.length > 0) {
-                            
-                        }else{
-                            //We got all the dependency's to run. Lets do it.
-                            this.notReadyModules[key].isReady = true;
-                            this.notReadyModules[key].func(public.currentScope);
-                        }
+            console.log(this.notReadyModules);
+
+            //if (typeof this.notReadyModules !== 'undefined' && this.notReadyModules.length > 0) { 
+            //Loop through all the not ready modules
+            for (var key in this.notReadyModules) {
+                //The dependency matches the new module
+                if (this.notReadyModules[key].dependencies.indexOf(module.name) > -1) {
+
+                    //Delete it from the list
+                    var index = this.notReadyModules[key].dependencies.indexOf(module.name);
+                    this.notReadyModules[key].dependencies.splice(index);
+
+                    //Check if dependencies is empty
+                    if (typeof this.notReadyModules[key].dependencies !== 'undefined' && this.notReadyModules[key].dependencies.length > 0) {
+
+                    } else {
+                        //We got all the dependency's to run. Lets do it.
+                        this.notReadyModules[key].isReady = true;
+                        this.notReadyModules[key].func(public.currentScope);
                     }
                 }
+            }
             //}
 
         },
@@ -88,6 +125,15 @@
 
             xmlhttp.open(options.method, options.url, async);
             xmlhttp.send(data);
+        },
+        objToQuery: function(obj) {
+            var parts = [];
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+                }
+            }
+            return parts.join('&');
         }
     };
 
@@ -102,12 +148,15 @@
 
     //The events
     function onHashChange(e) {
-        console.log(e);
+        private.doRouting();
     }
 
     var public = {
         currentModule: {},
         currentScope: {},
+        routes: function(routes) {
+            private.routes = routes;
+        },
         /**
          * Registers a new module to be used
          * 
@@ -153,8 +202,16 @@
             //For future chaining
             return this;
         },
-        check: function() {
+        controller: function(name, func) {
+            var newController = {
+                func: func
+            };
             
+            private.controllers[name] = newController;
+        },
+        run: function(element) {
+            private.containerElement = element;
+            private.doRouting();                      
         }
     };
 

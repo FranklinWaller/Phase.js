@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src='../src/phase.js'></script>
+        <script>
+            phase.routes({
+                "base": {
+                    url: 'templates/1.html',
+                    controller: 'BaseController'
+                },
+                
+                "home": {
+                    url: 'templates/2.html',
+                    controller: 'HomeController'
+                }
+            });
+            
+            phase.controller('BaseController', function(){
+                alert('Hi from base');
+            });
+            
+            phase.controller('HomeController', function(){
+                alert('Hi from home');
+            });
+            
+            
+        </script>
+    </head>
+    <body>
+        
+        <div id='container'>
+            
+        </div>
+        <a href='#base'>
+            Get 1
+        </a>
+        <a href='#home'>
+            Get 2
+        </a>
+        
+        <script>
+            phase.run(document.getElementById('container'));
+        </script>
+    </body>
+</html>

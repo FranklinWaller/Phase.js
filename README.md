@@ -28,7 +28,7 @@ foo module then bar will not run.
 
 Routing
 ----
-It os very easy to write a route with Phase.js. Phase.js takes care of attaching controllers and loading the templates.
+It is very easy to write a route with Phase.js. Phase.js takes care of attaching controllers and loading the templates.
 
 Here is how you write a simple route:
 

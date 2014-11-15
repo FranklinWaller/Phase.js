@@ -54,7 +54,12 @@ phase.controller('HomeController', function(){
 ```
 
 The routing system will hit that controller when the route matches.
+Finnaly we have to run the application you can simply do that by using phase.run(domObject);
+The domObject is the content you want to be dynamicly changed
 
+```javascript
+phase.run(document.getElementById('content'));
+```
 
 Well that's all the basics!
 If you want to join the project feel free to fork and edit it!

@@ -1,8 +1,6 @@
 Phase.js
 ========
 
-**Disclaimer: Phase.js is not a production ready framework. It's still a work in progress**
-
 Phase.js is a framework for building JavaScript applications. It works in modules
 that registers itself with the dependency. If the dependency's of your module isn't
 loaded yet it will put it on a stack and wait till all the modules that it need is 
